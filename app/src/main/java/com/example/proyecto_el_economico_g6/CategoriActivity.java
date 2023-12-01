@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,8 +32,11 @@ public class CategoriActivity extends AppCompatActivity {
     public List<Categoria> listadecategoria = new ArrayList<Categoria>();
     ArrayAdapter<Categoria> arrayAdapterCategoria;
     EditText txtcategoria, txtdescripcion;
-    Button btncrear, btnactualizar, btneliminar, btnregresar;
+    Button btncrear, btnactualizar, btneliminar, btnregresar, btnLimpiarCate;
     ListView listViewcategorias;
+
+    Categoria categoriaSelected;
+
 
     FirebaseFirestore mFirestore;
     DatabaseReference databaseReference;
@@ -52,17 +56,28 @@ public class CategoriActivity extends AppCompatActivity {
         btnactualizar = findViewById(R.id.btnactualizar);
         btneliminar = findViewById(R.id.btneliminar);
         btnregresar = findViewById(R.id.btnregresar);
+        btnLimpiarCate = findViewById(R.id.btnLimpiarCate);
         listViewcategorias = findViewById(R.id.listcategorias);
 
         progressDialog = new ProgressDialog(this);
 
         mFirestore = FirebaseFirestore.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
+        //para persistencia de datos
+       // firebaseDatabase.setPersistenceEnabled(true);
         databaseReference = firebaseDatabase.getReference();
 
         listarCategorias();
 
-
+        //evento click en lista
+        listViewcategorias.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                categoriaSelected = (Categoria) parent.getItemAtPosition(position);
+                txtcategoria.setText(categoriaSelected.getCategoria());
+                txtdescripcion.setText(categoriaSelected.getDescripcion());
+            }
+        });
 
         btncrear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +93,25 @@ public class CategoriActivity extends AppCompatActivity {
             }
         });
 
+        btnactualizar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Categoria c = new Categoria();
+                c.setId(categoriaSelected.getId());
+                c.setCategoria(txtcategoria.getText().toString().trim());
+                c.setDescripcion(txtdescripcion.getText().toString().trim());
+                databaseReference.child("Categoria").child(c.getId()).setValue(c);
+                Toast.makeText(CategoriActivity.this,"Datos Actualizados!", Toast.LENGTH_LONG).show();
+                limpiar();
+            }
+        });
+
+        btnLimpiarCate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                limpiar();
+            }
+        });
 
     }
 
@@ -87,7 +121,7 @@ public class CategoriActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listadecategoria.clear();
                 for(DataSnapshot objSnapshot : snapshot.getChildren()){
-                    Categoria c = objSnapshot.getValue(Categoria.class);
+                    Categoria c = objSnapshot.getValue(Categoria.class); //*retorna todo el objeto llamdao c*/
                     listadecategoria.add(c);
 
                     arrayAdapterCategoria = new ArrayAdapter<Categoria>( CategoriActivity.this, android.R.layout.simple_list_item_1,listadecategoria);
@@ -140,6 +174,8 @@ public class CategoriActivity extends AppCompatActivity {
         txtcategoria.setText("");
         txtdescripcion.setText("");
     }
+
+
 
 
 }
