@@ -3,7 +3,9 @@ package com.example.proyecto_el_economico_g6;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -96,13 +98,8 @@ public class CategoriActivity extends AppCompatActivity {
         btnactualizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Categoria c = new Categoria();
-                c.setId(categoriaSelected.getId());
-                c.setCategoria(txtcategoria.getText().toString().trim());
-                c.setDescripcion(txtdescripcion.getText().toString().trim());
-                databaseReference.child("Categoria").child(c.getId()).setValue(c);
-                Toast.makeText(CategoriActivity.this,"Datos Actualizados!", Toast.LENGTH_LONG).show();
-                limpiar();
+                dialogUpdate();
+
             }
         });
 
@@ -110,6 +107,13 @@ public class CategoriActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 limpiar();
+            }
+        });
+
+        btneliminar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogDelete();
             }
         });
 
@@ -175,7 +179,65 @@ public class CategoriActivity extends AppCompatActivity {
         txtdescripcion.setText("");
     }
 
+    private void dialogUpdate(){
+        new AlertDialog.Builder(this)
+                .setTitle("Actualizacion De Registros!")
+                .setMessage("Esta seguro de actualizar los datos?")
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        limpiar();
+                        dialog.dismiss();
+                    }
+                }).setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        actualizarCate();
+                        limpiar();
+                        dialog.dismiss();
+                    }
+                })
+        .show();
+    }
 
 
+    private void dialogDelete(){
+        new AlertDialog.Builder(this)
+                .setTitle("Borrar Registro!")
+                .setMessage("Esta seguro que desea eliminar la categoria?")
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        limpiar();
+                        dialog.dismiss();
+                    }
+                }).setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteCate();
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+
+    private void actualizarCate(){
+        Categoria c = new Categoria();
+        c.setId(categoriaSelected.getId());
+        c.setCategoria(txtcategoria.getText().toString().trim());
+        c.setDescripcion(txtdescripcion.getText().toString().trim());
+        databaseReference.child("Categoria").child(c.getId()).setValue(c);
+        Toast.makeText(CategoriActivity.this,"Datos Actualizados!", Toast.LENGTH_LONG).show();
+
+    }
+
+    private void deleteCate(){
+        Categoria c = new Categoria();
+        c.setId(categoriaSelected.getId());
+        databaseReference.child("Categoria").child(c.getId()).removeValue();
+        Toast.makeText(CategoriActivity.this,"Registro Eliminado!", Toast.LENGTH_LONG).show();
+        limpiar();
+    }
 
 }
