@@ -39,7 +39,6 @@ public class CategoriActivity extends AppCompatActivity {
 
     Categoria categoriaSelected;
 
-
     FirebaseFirestore mFirestore;
     DatabaseReference databaseReference;
     FirebaseDatabase firebaseDatabase;
@@ -50,7 +49,6 @@ public class CategoriActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categori);
-
 
         txtcategoria = findViewById(R.id.txtcategoria);
         txtdescripcion = findViewById(R.id.txtdescripcion);
@@ -65,9 +63,11 @@ public class CategoriActivity extends AppCompatActivity {
 
         mFirestore = FirebaseFirestore.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        //para persistencia de datos
-       // firebaseDatabase.setPersistenceEnabled(true);
         databaseReference = firebaseDatabase.getReference();
+
+
+        //para persistencia de datos
+        // firebaseDatabase.setPersistenceEnabled(true);
 
         listarCategorias();
 
