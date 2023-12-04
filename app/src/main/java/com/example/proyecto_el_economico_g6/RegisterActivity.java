@@ -128,6 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
                             p.setId(id);
                             p.setNombre(nombre);
                             p.setApellido(apellido);
+                            p.setTelefono(telefono);
                             p.setCorreo(email);
                             p.setLatitud(latitud);
                             p.setLongitud(longitud);
@@ -136,29 +137,6 @@ public class RegisterActivity extends AppCompatActivity {
 
                             databaseReference.child("Persona").child(p.getId()).setValue(p);
 
-                            /*
-                            //usando Map
-                            map.put("id", id);
-                            map.put("nombre", nombre);
-                            map.put("apellido",apellido);
-                            map.put("telefono", telefono);
-                            map.put("email", email);
-                            map.put("latitud", latitud);
-                            map.put("longitud", longitud);
-                            map.put("rol_usuario", rol);
-                            map.put("foto", foto);
-
-
-                            mFirestore.collection("usuarios").document(id).set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(RegisterActivity.this, "Error al salvar!", Toast.LENGTH_LONG).show();
-                                }
-                            });*/
 
                             progressDialog.dismiss();
                             cambioActividad();
